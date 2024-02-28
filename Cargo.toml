@@ -1,5 +1,5 @@
 [workspace]
-members = ["assets-cli", "ryot", "ryot_compass"]
+members = ["ryot-assets-cli", "ryot", "ryot_compass"]
 resolver = "2"
 
 # Enable a small amount of optimization in debug mode
