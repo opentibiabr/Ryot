@@ -1,7 +1,19 @@
 [package]
-name = "assets-cli"
+name = "ryot-assets-cli"
 version = "0.1.0"
 edition = "2021"
+authors = [
+    "Lucas Grossi <lucas.ggrosis@gmail.com>",
+    "Luan Santos <cargo@luan.sh>",
+]
+license = "MIT OR Apache-2.0"
+description = "CLI for managing assets from the Tibia client for Ryot."
+repository = "https://github.com/opentibiabr/Ryot/tree/main/ryot"
+homepage = "https://github.com/opentibiabr/Ryot"
+documentation = "https://docs.rs/ryot/"
+keywords = ["gamedev", "assets", "ryot", "otbr", "bevy"]
+categories = ["game-development"]
+readme = "../README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

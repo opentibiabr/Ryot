@@ -305,23 +305,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "assets-cli"
-version = "0.1.0"
-dependencies = [
- "clap",
- "color-eyre",
- "config",
- "glam",
- "image",
- "log",
- "rayon",
- "rstest",
- "ryot",
- "serde",
- "simple_logger",
-]
-
-[[package]]
 name = "async-broadcast"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5023,7 +5006,7 @@ dependencies = [
 
 [[package]]
 name = "ryot"
-version = "0.1.5"
+version = "0.1.6"
 dependencies = [
  "async-std",
  "bevy",
@@ -5054,6 +5037,23 @@ dependencies = [
  "thiserror",
  "time-test",
  "zstd",
+]
+
+[[package]]
+name = "ryot-assets-cli"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "color-eyre",
+ "config",
+ "glam",
+ "image",
+ "log",
+ "rayon",
+ "rstest",
+ "ryot",
+ "serde",
+ "simple_logger",
 ]
 
 [[package]]
