@@ -1,5 +1,5 @@
 //! Sprite loading and drawing.
-use crate::appearances::{FixedFrameGroup, SpriteInfo, SpriteSheetData, SpriteSheetDataSet};
+use crate::appearances::{FrameType, SpriteInfo, SpriteSheetData, SpriteSheetDataSet};
 use crate::{get_decompressed_file_name, SPRITE_SHEET_FOLDER};
 use crate::{prelude::*, Directional};
 use bevy::prelude::*;
@@ -28,39 +28,39 @@ pub struct LoadedAppearance {
 }
 
 #[derive(Component, Debug, Clone, Copy, Deref, DerefMut, PartialEq, Eq, Hash, Default)]
-pub struct FrameGroupComponent(pub FixedFrameGroup);
+pub struct FrameGroupComponent(pub FrameType);
 
 impl FrameGroupComponent {
     pub fn moving() -> Self {
-        Self(FixedFrameGroup::OutfitMoving)
+        Self(FrameType::OutfitMoving)
     }
 
     pub fn idle() -> Self {
-        Self(FixedFrameGroup::OutfitIdle)
+        Self(FrameType::OutfitIdle)
     }
 
     pub(crate) fn frame_group_index(&self) -> i32 {
         match self.0 {
-            FixedFrameGroup::OutfitIdle => 0,
-            FixedFrameGroup::OutfitMoving => 1,
-            FixedFrameGroup::ObjectInitial => 0,
+            FrameType::OutfitIdle => 0,
+            FrameType::OutfitMoving => 1,
+            FrameType::ObjectInitial => 0,
         }
     }
 
     pub fn set_moving(&mut self, value: bool) {
-        if self.0 == FixedFrameGroup::ObjectInitial {
+        if self.0 == FrameType::ObjectInitial {
             return;
         }
         self.0 = if value {
-            FixedFrameGroup::OutfitMoving
+            FrameType::OutfitMoving
         } else {
-            FixedFrameGroup::OutfitIdle
+            FrameType::OutfitIdle
         };
     }
 }
 
-impl From<FixedFrameGroup> for FrameGroupComponent {
-    fn from(group: FixedFrameGroup) -> Self {
+impl From<FrameType> for FrameGroupComponent {
+    fn from(group: FrameType) -> Self {
         Self(group)
     }
 }

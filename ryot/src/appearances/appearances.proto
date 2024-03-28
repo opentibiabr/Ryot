@@ -2,272 +2,266 @@ syntax = "proto2";
 
 package appearances;
 
-message Coordinate {
-	optional uint32 x = 1;
-	optional uint32 y = 2;
-	optional uint32 z = 3;
+enum Action {
+  ACTION_NONE = 0;
+  ACTION_LOOK = 1;
+  ACTION_USE = 2;
+  ACTION_OPEN = 3;
+  ACTION_AUTO_WALK = 4;
 }
 
-enum PLAYER_ACTION {
-	PLAYER_ACTION_NONE = 0;
-	PLAYER_ACTION_LOOK = 1;
-	PLAYER_ACTION_USE = 2;
-	PLAYER_ACTION_OPEN = 3;
-	PLAYER_ACTION_AUTOWALK_HIGHLIGHT = 4;
+enum FrameType {
+  FRAME_TYPE_OUTFIT_IDLE = 0;
+  FRAME_TYPE_OUTFIT_MOVING = 1;
+  FRAME_TYPE_OBJECT_INITIAL = 2;
 }
 
-enum ITEM_CATEGORY {
-	ITEM_CATEGORY_ARMORS = 1;
-	ITEM_CATEGORY_AMULETS = 2;
-	ITEM_CATEGORY_BOOTS = 3;
-	ITEM_CATEGORY_CONTAINERS = 4;
-	ITEM_CATEGORY_DECORATION = 5;
-	ITEM_CATEGORY_FOOD = 6;
-	ITEM_CATEGORY_HELMETS_HATS = 7;
-	ITEM_CATEGORY_LEGS = 8;
-	ITEM_CATEGORY_OTHERS = 9;
-	ITEM_CATEGORY_POTIONS = 10;
-	ITEM_CATEGORY_RINGS = 11;
-	ITEM_CATEGORY_RUNES = 12;
-	ITEM_CATEGORY_SHIELDS = 13;
-	ITEM_CATEGORY_TOOLS = 14;
-	ITEM_CATEGORY_VALUABLES = 15;
-	ITEM_CATEGORY_AMMUNITION = 16;
-	ITEM_CATEGORY_AXES = 17;
-	ITEM_CATEGORY_CLUBS = 18;
-	ITEM_CATEGORY_DISTANCE_WEAPONS = 19;
-	ITEM_CATEGORY_SWORDS = 20;
-	ITEM_CATEGORY_WANDS_RODS = 21;
-	ITEM_CATEGORY_PREMIUM_SCROLLS = 22;
-	ITEM_CATEGORY_TIBIA_COINS = 23;
-	ITEM_CATEGORY_CREATURE_PRODUCTS = 24;
-	ITEM_CATEGORY_QUIVER = 25;
+enum HookType {
+  HOOK_TYPE_SOUTH = 1;
+  HOOK_TYPE_EAST = 2;
 }
 
-enum PLAYER_PROFESSION {
-	PLAYER_PROFESSION_ANY = -1;
-	PLAYER_PROFESSION_NONE = 0;
-	PLAYER_PROFESSION_KNIGHT = 1;
-	PLAYER_PROFESSION_PALADIN = 2;
-	PLAYER_PROFESSION_SORCERER = 3;
-	PLAYER_PROFESSION_DRUID = 4;
-	PLAYER_PROFESSION_PROMOTED = 10;
+enum LoopType {
+  LOOP_TYPE_PING_PONG = -1;
+  LOOP_TYPE_INFINITE = 0;
+  LOOP_TYPE_COUNTED = 1;
 }
 
-enum ANIMATION_LOOP_TYPE {
-	ANIMATION_LOOP_TYPE_PINGPONG = -1;
-	ANIMATION_LOOP_TYPE_INFINITE = 0;
-	ANIMATION_LOOP_TYPE_COUNTED = 1;
+enum Profession {
+  PROFESSION_ANY = -1;
+  PROFESSION_NONE = 0;
+  PROFESSION_KNIGHT = 1;
+  PROFESSION_PALADIN = 2;
+  PROFESSION_SORCERER = 3;
+  PROFESSION_DRUID = 4;
+  PROFESSION_PROMOTED = 10;
 }
 
-enum HOOK_TYPE {
-	HOOK_TYPE_SOUTH = 1;
-	HOOK_TYPE_EAST = 2;
+enum StoreCategory {
+  STORE_CATEGORY_ARMORS = 1;
+  STORE_CATEGORY_AMULETS = 2;
+  STORE_CATEGORY_BOOTS = 3;
+  STORE_CATEGORY_CONTAINERS = 4;
+  STORE_CATEGORY_DECORATION = 5;
+  STORE_CATEGORY_FOOD = 6;
+  STORE_CATEGORY_HELMETS_HATS = 7;
+  STORE_CATEGORY_LEGS = 8;
+  STORE_CATEGORY_OTHERS = 9;
+  STORE_CATEGORY_POTIONS = 10;
+  STORE_CATEGORY_RINGS = 11;
+  STORE_CATEGORY_RUNES = 12;
+  STORE_CATEGORY_SHIELDS = 13;
+  STORE_CATEGORY_TOOLS = 14;
+  STORE_CATEGORY_VALUABLES = 15;
+  STORE_CATEGORY_AMMUNITION = 16;
+  STORE_CATEGORY_AXES = 17;
+  STORE_CATEGORY_CLUBS = 18;
+  STORE_CATEGORY_DISTANCE_WEAPONS = 19;
+  STORE_CATEGORY_SWORDS = 20;
+  STORE_CATEGORY_WANDS_RODS = 21;
+  STORE_CATEGORY_PREMIUM_SCROLLS = 22;
+  STORE_CATEGORY_TIBIA_COINS = 23;
+  STORE_CATEGORY_CREATURE_PRODUCTS = 24;
+  STORE_CATEGORY_QUIVER = 25;
 }
 
-message Appearances {
-	repeated Appearance object = 1;
-	repeated Appearance outfit = 2;
-	repeated Appearance effect = 3;
-	repeated Appearance missile = 4;
-	optional SpecialMeaningAppearanceIds special_meaning_appearance_ids = 5;
+message VisualElements {
+  repeated VisualElement objects = 1;
+  repeated VisualElement outfits = 2;
+  repeated VisualElement effects = 3;
+  repeated VisualElement missiles = 4;
+  optional SpecialIds special_ids = 5;
 }
 
-message SpritePhase {
-	optional uint32 duration_min = 1;
-	optional uint32 duration_max = 2;
+message VisualElement {
+  optional uint32 id = 1;
+  repeated Frame frames = 2;
+  optional Flags flags = 3;
+  optional string name = 4;
+  optional bytes description = 5;
 }
 
-message SpriteAnimation {
-	optional uint32 default_start_phase = 1;
-	optional bool synchronized = 2;
-	optional bool random_start_phase = 3;
-	optional ANIMATION_LOOP_TYPE loop_type = 4;
-	optional uint32 loop_count = 5;
-	repeated SpritePhase sprite_phase = 6;
-}
-
-message Box {
-	optional uint32 x = 1;
-	optional uint32 y = 2;
-	optional uint32 width = 3;
-	optional uint32 height = 4;
+message Frame {
+  optional FrameType type = 1;
+  optional uint32 id = 2;
+  optional SpriteInfo sprite_info = 3;
 }
 
 message SpriteInfo {
-	optional uint32 pattern_width = 1;
-	optional uint32 pattern_height = 2;
-	optional uint32 pattern_depth = 3;
-	optional uint32 layers = 4;
-	repeated uint32 sprite_ids = 5;
-	optional uint32 bounding_square = 7;
-	optional SpriteAnimation animation = 6;
-	optional bool is_opaque = 8;
-	repeated Box bounding_box_per_direction = 9;
+  optional uint32 pattern_width = 1;
+  optional uint32 pattern_height = 2;
+  optional uint32 pattern_depth = 3;
+  optional uint32 layers = 4;
+  repeated uint32 sprite_ids = 5;
+  optional uint32 bounding_square = 7;
+  optional Animation animation = 6;
+  optional bool is_opaque = 8;
+  repeated Box bounding_box_per_direction = 9;
 }
 
-message FrameGroup {
-	optional FIXED_FRAME_GROUP fixed_frame_group = 1;
-	optional uint32 id = 2;
-	optional SpriteInfo sprite_info = 3;
+message Animation {
+  optional uint32 start_phase = 1;
+  optional bool synchronized = 2;
+  optional bool is_start_random = 3;
+  optional LoopType loop_type = 4;
+  optional uint32 loop_count = 5;
+  repeated Duration phases = 6;
 }
 
-message Appearance {
-	optional uint32 id = 1;
-	repeated FrameGroup frame_group = 2;
-	optional AppearanceFlags flags = 3;
-	optional string name = 4;
-	optional bytes description = 5;
+message Duration {
+  optional uint32 min = 1;
+  optional uint32 max = 2;
 }
 
-message AppearanceFlags {
-	optional AppearanceFlagBank bank = 1;
-	optional bool clip = 2;
-	optional bool bottom = 3;
-	optional bool top = 4;
-	optional bool container = 5;
-	optional bool cumulative = 6;
-	optional bool usable = 7;
-	optional bool forceuse = 8;
-	optional bool multiuse = 9;
-	optional AppearanceFlagWrite write = 10;
-	optional AppearanceFlagWriteOnce write_once = 11;
-	optional bool liquidpool = 12;
-	optional bool unpass = 13;
-	optional bool unmove = 14;
-	optional bool unsight = 15;
-	optional bool avoid = 16;
-	optional bool no_movement_animation = 17;
-	optional bool take = 18;
-	optional bool liquidcontainer = 19;
-	optional bool hang = 20;
-	optional AppearanceFlagHook hook = 21;
-	optional bool rotate = 22;
-	optional AppearanceFlagLight light = 23;
-	optional bool dont_hide = 24;
-	optional bool translucent = 25;
-	optional AppearanceFlagShift shift = 26;
-	optional AppearanceFlagHeight height = 27;
-	optional bool lying_object = 28;
-	optional bool animate_always = 29;
-	optional AppearanceFlagAutomap automap = 30;
-	optional AppearanceFlagLenshelp lenshelp = 31;
-	optional bool fullbank = 32;
-	optional bool ignore_look = 33;
-	optional AppearanceFlagClothes clothes = 34;
-	optional AppearanceFlagDefaultAction default_action = 35;
-	optional AppearanceFlagMarket market = 36;
-	optional bool wrap = 37;
-	optional bool unwrap = 38;
-	optional bool topeffect = 39;
-	repeated AppearanceFlagNPC npcsaledata = 40;
-	optional AppearanceFlagChangedToExpire changedtoexpire = 41;
-	optional bool corpse = 42;
-	optional bool player_corpse = 43;
-	optional AppearanceFlagCyclopedia cyclopediaitem = 44;
-	optional bool ammo = 45;
-	optional bool show_off_socket = 46;
-	optional bool reportable = 47;
-	optional AppearanceFlagUpgradeClassification upgradeclassification = 48;
-	optional bool reverse_addons_east = 49;
-	optional bool reverse_addons_west = 50;
-	optional bool reverse_addons_south = 51;
-	optional bool reverse_addons_north = 52;
-	optional bool wearout = 53;
-	optional bool clockexpire = 54;
-	optional bool expire = 55;
-	optional bool expirestop = 56;
-	optional bool deco_kit = 57;
+message Box {
+  optional uint32 x = 1;
+  optional uint32 y = 2;
+  optional uint32 width = 3;
+  optional uint32 height = 4;
 }
 
-message AppearanceFlagUpgradeClassification {
-	optional uint32 upgrade_classification = 1;
+message Flags {
+  optional Ground ground = 1;
+  optional bool is_edge = 2;
+  optional bool is_bottom = 3;
+  optional bool is_top = 4;
+  optional bool is_container = 5;
+  optional bool is_cumulative = 6;
+  optional bool is_usable = 7;
+  optional bool can_force_use = 8;
+  optional bool is_multi_use = 9;
+  optional WriteInfo write_info = 10;
+  optional WriteOnceInfo write_once_info = 11;
+  optional bool is_liquid_pool = 12;
+  optional bool is_not_walkable = 13;
+  optional bool is_not_movable = 14;
+  optional bool blocks_visibility = 15;
+  optional bool is_avoidable = 16;
+  optional bool has_no_movement_animation = 17;
+  optional bool can_be_taken = 18;
+  optional bool is_liquid_container = 19;
+  optional bool can_be_hanged = 20;
+  optional HookInfo hook_info = 21;
+  optional bool can_rotate = 22;
+  optional Light light = 23;
+  optional bool cannot_hide = 24;
+  optional bool is_translucent = 25;
+  optional Displacement displacement = 26;
+  optional Elevation elevation = 27;
+  optional bool lying_object = 28;
+  optional bool should_always_animate = 29;
+  optional Minimap minimap = 30;
+  optional LensHelp lens_help = 31;
+  optional bool is_ground = 32;
+  optional bool should_ignore_look = 33;
+  optional Slot slot = 34;
+  optional DefaultAction default_action = 35;
+  optional MarketInfo market_info = 36;
+  optional bool wrap = 37;
+  optional bool unwrap = 38;
+  optional bool has_top_effect = 39;
+  repeated NpcSalesInfo npc_sales_info = 40;
+  optional ChangedToExpire changed_to_expire = 41;
+  optional bool is_corpse = 42;
+  optional bool is_player_corpse = 43;
+  optional Cyclopedia cyclopedia = 44;
+  optional bool is_ammo = 45;
+  optional bool should_show_off_socket = 46;
+  optional bool is_reportable = 47;
+  optional UpgradeClassification upgrade_classification = 48;
+  optional bool reverse_addons_east = 49;
+  optional bool reverse_addons_west = 50;
+  optional bool reverse_addons_south = 51;
+  optional bool reverse_addons_north = 52;
+  optional bool wears_out = 53;
+  optional bool clock_expires = 54;
+  optional bool expires = 55;
+  optional bool expirestop = 56;
+  optional bool is_decoration_kit = 57;
 }
 
-message AppearanceFlagBank {
-	optional uint32 waypoints = 1;
+message Ground {
+  optional uint32 speed = 1;
 }
 
-message AppearanceFlagWrite {
-	optional uint32 max_text_length = 1;
+message WriteInfo {
+  optional uint32 max_length = 1;
 }
 
-message AppearanceFlagWriteOnce {
-	optional uint32 max_text_length_once = 1;
+message WriteOnceInfo {
+  optional uint32 max_length = 1;
 }
 
-message AppearanceFlagLight {
-	optional uint32 brightness = 1;
-	optional uint32 color = 2;
+message HookInfo {
+  optional HookType south = 1;
+  optional HookType east = 2;
 }
 
-message AppearanceFlagHeight {
-	optional uint32 elevation = 1;
+message Light {
+  optional uint32 brightness = 1;
+  optional uint32 color = 2;
 }
 
-message AppearanceFlagShift {
-	optional uint32 x = 1;
-	optional uint32 y = 2;
+message Displacement {
+  optional uint32 x = 1;
+  optional uint32 y = 2;
 }
 
-message AppearanceFlagClothes {
-	optional uint32 slot = 1;
+message Elevation {
+  optional uint32 height = 1;
 }
 
-message AppearanceFlagDefaultAction {
-	optional PLAYER_ACTION action = 1;
+message Minimap {
+  optional uint32 color = 1;
 }
 
-message AppearanceFlagMarket {
-	optional ITEM_CATEGORY category = 1;
-	optional uint32 trade_as_object_id = 2;
-	optional uint32 show_as_object_id = 3;
-	optional string name = 4;
-	repeated PLAYER_PROFESSION restrict_to_profession = 5;
-	optional uint32 minimum_level = 6;
+message LensHelp {
+  optional uint32 id = 1;
 }
 
-message AppearanceFlagNPC {
-	optional string name = 1;
-	optional string location = 2;
-	optional uint32 sale_price = 3;
-	optional uint32 buy_price = 4;
-	optional uint32 currency_object_type_id = 5;
-	optional string currency_quest_flag_display_name = 6;
+message Slot {
+  optional uint32 id = 1;
 }
 
-message AppearanceFlagAutomap {
-	optional uint32 color = 1;
+message DefaultAction {
+  optional Action action = 1;
 }
 
-message AppearanceFlagHook {
-	optional HOOK_TYPE south = 1;
-	optional HOOK_TYPE east = 2;
+message MarketInfo {
+  optional StoreCategory category = 1;
+  optional uint32 trade_as_object_id = 2;
+  optional uint32 show_as_object_id = 3;
+  optional string name = 4;
+  repeated Profession restrict_to_profession = 5;
+  optional uint32 minimum_level = 6;
 }
 
-message AppearanceFlagLenshelp {
-	optional uint32 id = 1;
+message NpcSalesInfo {
+  optional string name = 1;
+  optional string location = 2;
+  optional uint32 sale_price = 3;
+  optional uint32 buy_price = 4;
+  optional uint32 currency_id = 5;
+  optional string currency_quest_flag_display_name = 6;
 }
 
-message AppearanceFlagChangedToExpire {
-	optional uint32 former_object_typeid = 1;
+message ChangedToExpire {
+  optional uint32 former_object_type_id = 1;
 }
 
-message AppearanceFlagCyclopedia {
-	optional uint32 cyclopedia_type = 1;
+message Cyclopedia {
+  optional uint32 id = 1;
 }
 
-message SpecialMeaningAppearanceIds {
-	optional uint32 gold_coin_id = 1;
-	optional uint32 platinum_coin_id = 2;
-	optional uint32 crystal_coin_id = 3;
-	optional uint32 tibia_coin_id = 4;
-	optional uint32 stamped_letter_id = 5;
-	optional uint32 supply_stash_id = 6;
+message UpgradeClassification {
+  optional uint32 value = 1;
 }
 
-enum FIXED_FRAME_GROUP {
-	FIXED_FRAME_GROUP_OUTFIT_IDLE = 0;
-	FIXED_FRAME_GROUP_OUTFIT_MOVING = 1;
-	FIXED_FRAME_GROUP_OBJECT_INITIAL = 2;
+message SpecialIds {
+  optional uint32 gold_coin_id = 1;
+  optional uint32 platinum_coin_id = 2;
+  optional uint32 crystal_coin_id = 3;
+  optional uint32 tibia_coin_id = 4;
+  optional uint32 stamped_letter_id = 5;
+  optional uint32 supply_stash_id = 6;
 }

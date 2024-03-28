@@ -1,5 +1,5 @@
 use egui::WidgetText;
-use ryot::appearances::{Appearance, AppearanceFlags, ItemCategory};
+use ryot::appearances::{is_true, Flags, StoreCategory, VisualElement};
 use ryot::prelude::*;
 use std::cmp::Ordering;
 use strum::{EnumCount, EnumIter};
@@ -23,46 +23,46 @@ pub enum TilesetCategory {
     Raw,
 }
 
-impl From<&AppearanceFlags> for TilesetCategory {
-    fn from(flags: &AppearanceFlags) -> Self {
+impl From<&Flags> for TilesetCategory {
+    fn from(flags: &Flags) -> Self {
         // Market has categories, so we can use it to determine the category of the item.
         // If the item has a market flag, it's category is prioritized over the other flags.
-        if let Some(market) = &flags.market {
+        if let Some(market) = &flags.market_info {
             if let Some(category) = market.category {
-                return (&ItemCategory::try_from(category).unwrap()).into();
+                return (&StoreCategory::try_from(category).unwrap()).into();
             }
         }
 
-        if flags.bank.is_some() {
+        if flags.ground.is_some() || is_true(flags.is_ground) {
             return TilesetCategory::Terrains;
         }
 
-        if flags.clip.is_some() {
+        if is_true(flags.is_edge) {
             return TilesetCategory::Edges;
         }
 
-        if flags.bottom.is_some() {
+        if is_true(flags.is_bottom) {
             return TilesetCategory::BaseLayer;
         }
 
-        if flags.top.is_some() {
+        if is_true(flags.is_top) {
             return TilesetCategory::UpperLayer;
         }
 
         // Corpses are also containers, so they need to be checked first
-        if flags.corpse.is_some() || flags.player_corpse.is_some() {
+        if is_true(flags.is_corpse) || is_true(flags.is_player_corpse) {
             return TilesetCategory::Corpses;
         }
 
-        if flags.container.is_some() {
+        if is_true(flags.is_container) {
             return TilesetCategory::Containers;
         }
 
-        if flags.hang.is_some() || flags.hook.is_some() || flags.rotate.is_some() {
+        if is_true(flags.can_be_hanged) || is_true(flags.can_rotate) || flags.hook_info.is_some() {
             return TilesetCategory::Decor;
         }
 
-        if flags.clothes.is_some() {
+        if flags.slot.is_some() {
             return TilesetCategory::Clothes;
         }
 
@@ -70,40 +70,40 @@ impl From<&AppearanceFlags> for TilesetCategory {
     }
 }
 
-impl From<&ItemCategory> for TilesetCategory {
-    fn from(category: &ItemCategory) -> Self {
+impl From<&StoreCategory> for TilesetCategory {
+    fn from(category: &StoreCategory) -> Self {
         match category {
-            ItemCategory::Ammunition
-            | ItemCategory::Axes
-            | ItemCategory::Clubs
-            | ItemCategory::DistanceWeapons
-            | ItemCategory::Shields
-            | ItemCategory::Quiver
-            | ItemCategory::Swords
-            | ItemCategory::WandsRods => TilesetCategory::Weapons,
-            ItemCategory::Armors
-            | ItemCategory::Amulets
-            | ItemCategory::Boots
-            | ItemCategory::HelmetsHats
-            | ItemCategory::Legs
-            | ItemCategory::Rings => TilesetCategory::Clothes,
-            ItemCategory::CreatureProducts => TilesetCategory::CreatureProducts,
-            ItemCategory::Containers => TilesetCategory::Containers,
-            ItemCategory::Decoration => TilesetCategory::Decor,
-            ItemCategory::Food | ItemCategory::Potions | ItemCategory::Runes => {
+            StoreCategory::Ammunition
+            | StoreCategory::Axes
+            | StoreCategory::Clubs
+            | StoreCategory::DistanceWeapons
+            | StoreCategory::Shields
+            | StoreCategory::Quiver
+            | StoreCategory::Swords
+            | StoreCategory::WandsRods => TilesetCategory::Weapons,
+            StoreCategory::Armors
+            | StoreCategory::Amulets
+            | StoreCategory::Boots
+            | StoreCategory::HelmetsHats
+            | StoreCategory::Legs
+            | StoreCategory::Rings => TilesetCategory::Clothes,
+            StoreCategory::CreatureProducts => TilesetCategory::CreatureProducts,
+            StoreCategory::Containers => TilesetCategory::Containers,
+            StoreCategory::Decoration => TilesetCategory::Decor,
+            StoreCategory::Food | StoreCategory::Potions | StoreCategory::Runes => {
                 TilesetCategory::Consumables
             }
-            ItemCategory::PremiumScrolls | ItemCategory::TibiaCoins | ItemCategory::Valuables => {
-                TilesetCategory::Valuables
-            }
-            ItemCategory::Others => TilesetCategory::Miscellaneous,
-            ItemCategory::Tools => TilesetCategory::Tools,
+            StoreCategory::PremiumScrolls
+            | StoreCategory::TibiaCoins
+            | StoreCategory::Valuables => TilesetCategory::Valuables,
+            StoreCategory::Others => TilesetCategory::Miscellaneous,
+            StoreCategory::Tools => TilesetCategory::Tools,
         }
     }
 }
 
-impl From<&Appearance> for TilesetCategory {
-    fn from(appearance: &Appearance) -> Self {
+impl From<&VisualElement> for TilesetCategory {
+    fn from(appearance: &VisualElement) -> Self {
         if let Some(flags) = &appearance.flags {
             return flags.into();
         }

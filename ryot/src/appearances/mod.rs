@@ -145,5 +145,9 @@ impl SpriteSheetDataSet {
     }
 }
 
+pub fn is_true(value: Option<bool>) -> bool {
+    value == Some(true)
+}
+
 #[cfg(test)]
 mod tests;

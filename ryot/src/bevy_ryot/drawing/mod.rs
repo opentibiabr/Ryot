@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use crate::appearances::{self};
+use crate::appearances::{self, is_true};
 use crate::bevy_ryot::{GameObjectId, InternalContentState};
 use crate::directional::*;
 use crate::layer::*;
@@ -320,13 +320,13 @@ impl DetailLevel {
     }
 }
 
-impl From<Option<appearances::AppearanceFlags>> for Layer {
-    fn from(flags: Option<appearances::AppearanceFlags>) -> Self {
+impl From<Option<appearances::Flags>> for Layer {
+    fn from(flags: Option<appearances::Flags>) -> Self {
         match flags {
-            Some(flags) if flags.top.is_some() => Layer::Top,
-            Some(flags) if flags.bank.is_some() => Layer::Ground,
-            Some(flags) if flags.fullbank.is_some() => Layer::Ground,
-            Some(flags) if flags.clip.is_some() => Layer::Edge,
+            Some(flags) if is_true(flags.is_top) => Layer::Top,
+            Some(flags) if flags.ground.is_some() => Layer::Ground,
+            Some(flags) if is_true(flags.is_ground) => Layer::Ground,
+            Some(flags) if is_true(flags.is_edge) => Layer::Edge,
             _ => Layer::Bottom(BottomLayer::new(0, RelativeLayer::Object)),
         }
     }

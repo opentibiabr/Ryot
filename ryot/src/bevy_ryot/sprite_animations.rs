@@ -1,5 +1,5 @@
 //! Sprite animations module.
-use crate::appearances::SpriteAnimation;
+use crate::appearances::Animation;
 use crate::prelude::*;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
@@ -68,13 +68,13 @@ pub(crate) trait SpriteAnimationExt {
     fn get_animation_key(&self) -> AnimationKey;
 }
 
-impl SpriteAnimationExt for SpriteAnimation {
+impl SpriteAnimationExt for Animation {
     fn get_animation_key(&self) -> AnimationKey {
         let phase_durations = self
-            .sprite_phase
+            .phases
             .iter()
             .map(|phase| -> Duration {
-                let range = phase.duration_min()..phase.duration_max();
+                let range = phase.min()..phase.max();
                 if range.start == range.end {
                     return Duration::from_millis(range.start.into());
                 }
@@ -84,11 +84,11 @@ impl SpriteAnimationExt for SpriteAnimation {
 
         AnimationKey {
             phase_durations,
-            start_phase: match self.random_start_phase() {
+            start_phase: match self.is_start_random() {
                 true => AnimationStartPhase::Random,
-                false => AnimationStartPhase::Fixed(self.default_start_phase() as usize),
+                false => AnimationStartPhase::Fixed(self.start_phase() as usize),
             },
-            total_phases: self.sprite_phase.len(),
+            total_phases: self.phases.len(),
         }
     }
 }

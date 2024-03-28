@@ -1,7 +1,7 @@
 //! # Appearances
 //! This module contains the code to load the appearances.dat file.
 //! This file contains the information needed to load sprites and other content.
-use crate::appearances::{self, AppearanceFlags, Appearances, FrameGroup};
+use crate::appearances::{self, Flags, Frame, VisualElements};
 use crate::layer::Layer;
 use crate::prelude::*;
 use bevy::asset::io::Reader;
@@ -24,11 +24,11 @@ impl Plugin for AppearanceAssetPlugin {
 
 /// Wrapper around the Appearances struct to make it an asset.
 #[derive(Debug, TypePath, Asset)]
-pub struct Appearance(pub Appearances);
+pub struct Appearance(pub VisualElements);
 
 /// The loader for the Appearance asset.
 /// It reads the file and decodes it from protobuf.
-/// See ryot::appearances::Appearances for more information.
+/// See ryot::appearances::VisualElement for more information.
 #[derive(Default)]
 pub struct AppearanceAssetLoader;
 
@@ -57,7 +57,7 @@ impl AssetLoader for AppearanceAssetLoader {
         Box::pin(async move {
             let mut bytes = Vec::new();
             reader.read_to_end(&mut bytes).await?;
-            let appearances = Appearances::decode(&*bytes)?;
+            let appearances = VisualElements::decode(&*bytes)?;
 
             Ok(Appearance(appearances))
         })
@@ -74,14 +74,14 @@ pub struct PreparedAppearance {
     pub name: String,
     pub layer: Layer,
     pub main_sprite_id: u32,
-    pub frame_groups: Vec<FrameGroup>,
-    pub flags: Option<AppearanceFlags>,
+    pub frame_groups: Vec<Frame>,
+    pub flags: Option<Flags>,
 }
 
-impl From<appearances::Appearance> for Option<PreparedAppearance> {
-    fn from(item: appearances::Appearance) -> Self {
+impl From<appearances::VisualElement> for Option<PreparedAppearance> {
+    fn from(item: appearances::VisualElement) -> Self {
         let id = item.id?;
-        let main_frame = item.frame_group.first()?.clone();
+        let main_frame = item.frames.first()?.clone();
         let main_sprite_id = *main_frame.sprite_info?.sprite_ids.first()?;
 
         Some(PreparedAppearance {
@@ -89,7 +89,7 @@ impl From<appearances::Appearance> for Option<PreparedAppearance> {
             name: item.name.unwrap_or(id.to_string()),
             layer: Layer::from(item.flags.clone()),
             main_sprite_id,
-            frame_groups: item.frame_group.clone(),
+            frame_groups: item.frames.clone(),
             flags: item.flags.clone(),
         })
     }
@@ -105,7 +105,12 @@ impl PreparedAppearances {
         self.groups.is_empty()
     }
 
-    pub fn insert(&mut self, group: AppearanceGroup, id: u32, appearance: appearances::Appearance) {
+    pub fn insert(
+        &mut self,
+        group: AppearanceGroup,
+        id: u32,
+        appearance: appearances::VisualElement,
+    ) {
         let prepared: Option<PreparedAppearance> = appearance.into();
 
         if let Some(prepared) = prepared {
@@ -149,10 +154,10 @@ pub(crate) fn prepare_appearances<C: AppearanceAssets>(
     let prepared_appearances = content_assets.prepared_appearances_mut();
 
     for (from, group) in [
-        (&appearances.object, AppearanceGroup::Object),
-        (&appearances.outfit, AppearanceGroup::Outfit),
-        (&appearances.effect, AppearanceGroup::Effect),
-        (&appearances.missile, AppearanceGroup::Missile),
+        (&appearances.objects, AppearanceGroup::Object),
+        (&appearances.outfits, AppearanceGroup::Outfit),
+        (&appearances.effects, AppearanceGroup::Effect),
+        (&appearances.missiles, AppearanceGroup::Missile),
     ] {
         process_appearances(from, |id, appearance| {
             prepared_appearances.insert(group, id, appearance.clone());
@@ -165,19 +170,19 @@ pub(crate) fn prepare_appearances<C: AppearanceAssets>(
 }
 
 fn process_appearances(
-    appearances: &[appearances::Appearance],
-    mut insert_fn: impl FnMut(u32, &appearances::Appearance),
+    appearances: &[appearances::VisualElement],
+    mut insert_fn: impl FnMut(u32, &appearances::VisualElement),
 ) {
     appearances
         .iter()
         .filter_map(|appearance| {
-            if appearance.frame_group.is_empty() {
+            if appearance.frames.is_empty() {
                 return None;
             }
 
             let id = appearance.id?;
 
-            for frame_group in appearance.frame_group.iter() {
+            for frame_group in appearance.frames.iter() {
                 let Some(sprite_info) = &frame_group.sprite_info else {
                     continue;
                 };
